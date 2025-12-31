@@ -62,6 +62,8 @@ button {
   background: white;
   color: #ff4f7b;
   font-weight: bold;
+  position: relative;
+  z-index: 2;
 }
 
 .no { position: relative; }
@@ -196,7 +198,7 @@ function go(id) {
   document.getElementById(id).classList.add('active');
 }
 function escape(btn) {
-  btn.style.left = Math.random() * 70 + "%";
+  btn.style.left = Math.random() * 50 + "%";
   btn.style.top = Math.random() * 40 + "px";
 }
 
@@ -206,7 +208,7 @@ function escape(btn) {
 const puzzleContainer = document.getElementById("slidePuzzle");
 let puzzleArray = [];
 const size = 2; // 2x2 puzzle
-const imgURL = "https://YOUR_IMAGE_URL_HERE"; // Replace with anime-style boy & girl image
+const imgURL = "https://i.ibb.co/JRjXk6v/ghibli-boy-girl.jpg"; // Replace with your anime image
 
 function initSlidePuzzle() {
   puzzleArray = [];
@@ -226,14 +228,13 @@ function shuffle(array){
 
 function renderPuzzle(){
   puzzleContainer.innerHTML = '';
-  const tileSize = 100;
   puzzleArray.forEach((num, idx)=>{
     const div = document.createElement("div");
     div.className = 'slideTile' + (num===null?' empty':'');
     if(num!==null){
       div.style.backgroundImage=`url(${imgURL})`;
-      div.style.backgroundPosition=`${(num%size)*(100/(size-1))}% ${Math.floor(num/size)*(100/(size-1))}%`;
       div.style.backgroundSize=`${size*100}% ${size*100}%`;
+      div.style.backgroundPosition=`${(num%size)*(100/(size-1))}% ${Math.floor(num/size)*(100/(size-1))}%`;
     }
     div.onclick = ()=>moveTile(idx);
     puzzleContainer.appendChild(div);
