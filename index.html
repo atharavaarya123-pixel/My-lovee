@@ -99,8 +99,10 @@ button {
   cursor: pointer;
   user-select: none;
   transition: all 0.2s ease;
-  background-size: 200% 200%;
-  background-repeat: no-repeat;
+  background: #ff4f7b;
+  color: white;
+  font-weight: bold;
+  font-size: 1.8rem;
 }
 .empty { background: transparent; cursor: default; }
 </style>
@@ -121,6 +123,19 @@ function createSnow() {
   setTimeout(() => snow.remove(), 12000);
 }
 setInterval(createSnow, 200);
+
+// Navigation
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// No button with big random teleport
+function escape(btn) {
+  btn.style.position = "absolute";
+  btn.style.left = Math.random() * 90 + "%";
+  btn.style.top = Math.random() * 80 + "%";
+}
 </script>
 
 <!-- SCREENS -->
@@ -141,7 +156,6 @@ setInterval(createSnow, 200);
   </div>
 </div>
 
-<!-- Slide Puzzle Game -->
 <div class="screen" id="slideGame">
   <h1>Complete the Puzzle! 🧩</h1>
   <p>Arrange the pieces to continue...</p>
@@ -150,7 +164,7 @@ setInterval(createSnow, 200);
 
 <div class="screen" id="s3">
   <h1>MYYY BABEEEEE!!🤍💋</h1>
-  <p>Am i your most favourite person and
+  <p>Am I your most favourite person and
     you will love me more than anyone???🥺💋🤍</p>
   <div class="buttons">
     <button onclick="go('snowGame')">YES 🤍</button>
@@ -158,12 +172,19 @@ setInterval(createSnow, 200);
   </div>
 </div>
 
-<!-- Snowflake Basket Game -->
 <div class="screen" id="snowGame">
   <h1>Catch 10 Snowflakes! ❄️💗</h1>
   <p>Avoid the bombs ❌. Collect 10 special snowflakes to continue.</p>
   <canvas id="basketCanvas" width="400" height="300" style="border-radius:15px;"></canvas>
   <p id="scoreDisplay">Snowflakes: 0 / 10</p>
+</div>
+
+<div class="screen" id="winScreen">
+  <h1>YOU WIN!!!💋❄️</h1>
+  <p>Congrats! Let's continue the adventure! 🥳💋</p>
+  <div class="buttons">
+    <button onclick="go('s4')">Continue 💗</button>
+  </div>
 </div>
 
 <div class="screen" id="s4">
@@ -192,23 +213,12 @@ setInterval(createSnow, 200);
 </div>
 
 <script>
-// Basic navigation
-function go(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-function escape(btn) {
-  btn.style.left = Math.random() * 50 + "%";
-  btn.style.top = Math.random() * 40 + "px";
-}
-
 // ---------------------
-// Slide Puzzle Game 2x2 with photo
+// Slide Puzzle without photo, just text
 // ---------------------
 const puzzleContainer = document.getElementById("slidePuzzle");
 let puzzleArray = [];
 const size = 2; // 2x2 puzzle
-const imgURL = "https://i.ibb.co/JRjXk6v/ghibli-boy-girl.jpg"; // Replace with your anime image
 
 function initSlidePuzzle() {
   puzzleArray = [];
@@ -221,7 +231,7 @@ function initSlidePuzzle() {
 function shuffle(array){
   for(let i=array.length-1;i>0;i--){
     const j=Math.floor(Math.random()*(i+1));
-    [array[i],array[j]]=[array[j],array[i]];
+    [array[i], array[j]] = [array[j], array[i]];
   }
   return array;
 }
@@ -232,9 +242,7 @@ function renderPuzzle(){
     const div = document.createElement("div");
     div.className = 'slideTile' + (num===null?' empty':'');
     if(num!==null){
-      div.style.backgroundImage=`url(${imgURL})`;
-      div.style.backgroundSize=`${size*100}% ${size*100}%`;
-      div.style.backgroundPosition=`${(num%size)*(100/(size-1))}% ${Math.floor(num/size)*(100/(size-1))}%`;
+      div.innerText = "KUCHUPUCHU";
     }
     div.onclick = ()=>moveTile(idx);
     puzzleContainer.appendChild(div);
@@ -246,7 +254,7 @@ function moveTile(idx){
   const x1 = idx%size, y1=Math.floor(idx/size);
   const x2 = emptyIdx%size, y2=Math.floor(emptyIdx/size);
   if(Math.abs(x1-x2)+Math.abs(y1-y2)===1){
-    [puzzleArray[idx], puzzleArray[emptyIdx]]=[puzzleArray[emptyIdx],puzzleArray[idx]];
+    [puzzleArray[idx], puzzleArray[emptyIdx]] = [puzzleArray[emptyIdx], puzzleArray[idx]];
     renderPuzzle();
     checkPuzzleComplete();
   }
@@ -260,7 +268,7 @@ function checkPuzzleComplete(){
 initSlidePuzzle();
 
 // ---------------------
-// Snowflake Basket Game
+// Snowflake Basket Game with WIN screen
 // ---------------------
 const canvas = document.getElementById('basketCanvas');
 const ctx = canvas.getContext('2d');
@@ -320,7 +328,10 @@ function draw() {
       else score=Math.max(0,score-1);
       f.collected=true;
       document.getElementById('scoreDisplay').innerText='Snowflakes: '+score+' / 10';
-      if(score>=10){ clearInterval(gameInterval); go('s4'); }
+      if(score>=10){ 
+        clearInterval(gameInterval); 
+        go('winScreen'); // show WIN screen
+      }
     }
   });
   snowflakes=snowflakes.filter(f=>!f.collected && f.y<canvas.height+30);
@@ -329,11 +340,11 @@ function draw() {
 
 canvas.addEventListener('mousemove', e=>{
   const rect = canvas.getBoundingClientRect();
-  targetX=e.clientX - rect.left - basketWidth/2;
+  targetX = e.clientX - rect.left - basketWidth/2;
 });
 
 function updateBasket(){
-  basketX += (targetX - basketX) *0.1;
+  basketX += (targetX - basketX) * 0.1;
   if(basketX<0) basketX=0;
   if(basketX>canvas.width-basketWidth) basketX=canvas.width-basketWidth;
   requestAnimationFrame(updateBasket);
@@ -352,4 +363,4 @@ document.getElementById('snowGame').addEventListener('click', startSnowGame,{onc
 </script>
 
 </body>
-  </html>
+</html>
