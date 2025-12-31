@@ -16,13 +16,11 @@ body {
   justify-content: center;
   text-align: center;
   color: white;
-
   background:
     linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
     url("https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?auto=format&fit=crop&w=1600&q=80");
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
 }
 
 .screen {
@@ -45,9 +43,15 @@ p {
   margin-bottom: 30px;
 }
 
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  position: relative;
+}
+
 button {
-  padding: 14px 30px;
-  margin: 10px;
+  padding: 14px 32px;
   font-size: 1.1rem;
   border-radius: 30px;
   border: none;
@@ -57,59 +61,50 @@ button {
   font-weight: bold;
 }
 
-.no {
-  position: absolute;
-}
+.no { position: absolute; }
 
-.floating {
-  position: absolute;
-  font-size: 2rem;
-  animation: float 12s linear infinite;
-  opacity: 0.6;
-  z-index: 1;
-}
-
-@keyframes float {
-  from { transform: translateY(110vh); }
-  to { transform: translateY(-10vh); }
-}
-
-/* ❄ Snow */
+/* Snowfall */
 .snow {
   position: absolute;
   top: -5vh;
   color: white;
   opacity: 0.9;
   pointer-events: none;
-  z-index: 2;
+  z-index: 1;
   animation: snowfall linear forwards;
 }
 
 @keyframes snowfall {
-  to {
-    transform: translateY(110vh);
-  }
+  to { transform: translateY(110vh); }
 }
+
+/* Slide Puzzle */
+#slidePuzzle {
+  width: 300px;
+  height: 300px;
+  margin: auto;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  gap: 2px;
+}
+.slideTile {
+  background-color: rgba(255,255,255,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+.empty { background: transparent; cursor: default; }
 </style>
 </head>
 
 <body>
 
 <script>
-// floating lips + hearts (continuous)
-function createFloatingEmoji() {
-  const el = document.createElement("div");
-  el.className = "floating";
-  el.innerText = Math.random() > 0.5 ? "💋" : "💕";
-  el.style.left = Math.random() * 100 + "%";
-  el.style.fontSize = (1.5 + Math.random()) + "rem";
-  el.style.animationDuration = (8 + Math.random() * 6) + "s";
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 15000);
-}
-setInterval(createFloatingEmoji, 700);
-
-// snowfall
+// Snowfall
 function createSnow() {
   const snow = document.createElement("div");
   snow.className = "snow";
@@ -123,34 +118,56 @@ function createSnow() {
 setInterval(createSnow, 200);
 </script>
 
-<!-- SCREENS (TEXT UNCHANGED) -->
-
+<!-- SCREENS -->
 <div class="screen active" id="s1">
   <h1>HEHEHEHE MYYY DARLINGGG!!!🤍 💋</h1>
   <p>Try to say no😏😏💋</p>
-  <button onclick="go('s2')">YES!!! 💋</button>
+  <div class="buttons">
+    <button onclick="go('s2')">YES!!! 💋</button>
+  </div>
 </div>
 
 <div class="screen" id="s2">
   <h1>MYYY LOVEEE!!!🤍💋</h1>
   <p>Am I your red string???🥺♾️🤍💋</p>
-  <button onclick="go('s3')">YES 💗</button>
-  <button class="no" onmouseover="move(this)">NO</button>
+  <div class="buttons">
+    <button class="yes" onclick="go('slideGame')">YES 💗</button>
+    <button class="no" onmouseover="escape(this)">NO</button>
+  </div>
+</div>
+
+<!-- Slide Puzzle Game -->
+<div class="screen" id="slideGame">
+  <h1>Complete the Puzzle! 🧩</h1>
+  <p>Arrange the pieces to continue...</p>
+  <div id="slidePuzzle"></div>
 </div>
 
 <div class="screen" id="s3">
   <h1>MYYY BABEEEEE!!🤍💋</h1>
   <p>Am i your most favourite person and
     you will love me more than anyone???🥺💋🤍</p>
-  <button onclick="go('s4')">YES 🤍</button>
-  <button class="no" onmouseover="move(this)">NO</button>
+  <div class="buttons">
+    <button onclick="go('snowGame')">YES 🤍</button>
+    <button class="no" onmouseover="escape(this)">NO</button>
+  </div>
+</div>
+
+<!-- Snowflake Basket Game -->
+<div class="screen" id="snowGame">
+  <h1>Catch 10 Snowflakes! ❄️💗</h1>
+  <p>Avoid the bombs ❌. Collect 10 special snowflakes to continue.</p>
+  <canvas id="basketCanvas" width="400" height="300" style="background: rgba(0,0,0,0.2); border-radius: 15px;"></canvas>
+  <p id="scoreDisplay">Snowflakes: 0 / 10</p>
 </div>
 
 <div class="screen" id="s4">
   <h1>MYYY KUCHUUUUPUCHUUUU!!!🤍🌕💋</h1>
   <p>Will you stay forever with me???🥺🥺🤍🛐💋🌕</p>
-  <button onclick="go('final')">YES 💍</button>
-  <button class="no" onmouseover="move(this)">NO</button>
+  <div class="buttons">
+    <button onclick="go('final')">YES 💍</button>
+    <button class="no" onmouseover="escape(this)">NO</button>
+  </div>
 </div>
 
 <div class="screen" id="final">
@@ -170,15 +187,132 @@ setInterval(createSnow, 200);
 </div>
 
 <script>
+// Basic navigation
 function go(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
-function move(btn) {
-  btn.style.left = Math.random() * 80 + "%";
-  btn.style.top = Math.random() * 80 + "%";
+function escape(btn) {
+  btn.style.left = Math.random() * 70 + "%";
+  btn.style.top = Math.random() * 40 + "px";
 }
+
+// ---------------------
+// Slide Puzzle Game
+// ---------------------
+const puzzleContainer = document.getElementById("slidePuzzle");
+let puzzleArray = [];
+const size = 3;
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function initSlidePuzzle() {
+  puzzleArray = [];
+  for (let i = 1; i < size*size; i++) puzzleArray.push(i);
+  puzzleArray.push(null);
+  shuffle(puzzleArray);
+  renderPuzzle();
+}
+
+function renderPuzzle() {
+  puzzleContainer.innerHTML = '';
+  puzzleArray.forEach((num, idx) => {
+    const div = document.createElement("div");
+    div.className = 'slideTile' + (num === null ? ' empty' : '');
+    if(num) div.innerText = num;
+    div.onclick = () => moveTile(idx);
+    puzzleContainer.appendChild(div);
+  });
+}
+
+function moveTile(idx) {
+  const emptyIdx = puzzleArray.indexOf(null);
+  const x1 = idx % size, y1 = Math.floor(idx / size);
+  const x2 = emptyIdx % size, y2 = Math.floor(emptyIdx / size);
+  if ((Math.abs(x1 - x2) + Math.abs(y1 - y2)) === 1) {
+    [puzzleArray[idx], puzzleArray[emptyIdx]] = [puzzleArray[emptyIdx], puzzleArray[idx]];
+    renderPuzzle();
+    checkPuzzleComplete();
+  }
+}
+
+function checkPuzzleComplete() {
+  for(let i=0;i<puzzleArray.length-1;i++) if(puzzleArray[i] !== i+1) return;
+  go('s3'); // Complete puzzle, go to next question
+}
+
+initSlidePuzzle();
+
+// ---------------------
+// Snowflake Basket Game
+// ---------------------
+const canvas = document.getElementById('basketCanvas');
+const ctx = canvas.getContext('2d');
+let basketX = canvas.width/2 - 30;
+const basketWidth = 60, basketHeight = 20;
+let snowflakes = [];
+let score = 0;
+let gameInterval;
+
+function spawnSnowflake() {
+  const type = Math.random() < 0.8 ? 'special' : 'bomb';
+  snowflakes.push({
+    x: Math.random() * (canvas.width-20),
+    y: -20,
+    size: 20,
+    type: type,
+    speed: 1 + Math.random()*2
+  });
+}
+
+function draw() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // Draw basket
+  ctx.fillStyle = '#ff4f7b';
+  ctx.fillRect(basketX, canvas.height - basketHeight - 5, basketWidth, basketHeight);
+  // Draw snowflakes
+  snowflakes.forEach(f => {
+    ctx.fillStyle = f.type === 'special' ? '#fff' : 'red';
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.size/2,0,Math.PI*2);
+    ctx.fill();
+    f.y += f.speed;
+    if(f.y + f.size > canvas.height - basketHeight - 5 &&
+       f.x + f.size > basketX && f.x < basketX + basketWidth) {
+      if(f.type==='special') score++;
+      else score = Math.max(0, score-1);
+      f.collected = true;
+      document.getElementById('scoreDisplay').innerText = 'Snowflakes: '+score+' / 10';
+      if(score>=10){ clearInterval(gameInterval); go('s4'); }
+    }
+  });
+  snowflakes = snowflakes.filter(f => !f.collected && f.y<canvas.height+30);
+  requestAnimationFrame(draw);
+}
+
+canvas.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  basketX = e.clientX - rect.left - basketWidth/2;
+  if(basketX <0) basketX=0;
+  if(basketX>canvas.width-basketWidth) basketX = canvas.width-basketWidth;
+});
+
+function startSnowGame() {
+  snowflakes=[];
+  score=0;
+  document.getElementById('scoreDisplay').innerText = 'Snowflakes: 0 / 10';
+  gameInterval = setInterval(spawnSnowflake, 800);
+  draw();
+}
+
+document.getElementById('snowGame').addEventListener('click', startSnowGame,{once:true});
 </script>
 
 </body>
-    </html>
+</html>
