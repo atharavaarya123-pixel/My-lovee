@@ -16,21 +16,19 @@ body {
   justify-content: center;
   text-align: center;
   color: white;
-  background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
-  background-size: 800% 800%;
-  animation: bg 20s ease infinite;
-}
 
-@keyframes bg {
-  0% {background-position:0% 50%;}
-  50% {background-position:100% 50%;}
-  100% {background-position:0% 50%;}
+  background:
+    linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
+    url("https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?auto=format&fit=crop&w=1600&q=80");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .screen {
   display: none;
   max-width: 90%;
-  z-index: 2;
+  z-index: 3;
 }
 
 .active { display: block; }
@@ -59,51 +57,84 @@ button {
   font-weight: bold;
 }
 
-.yes { background: white; }
 .no {
   position: absolute;
 }
 
 .floating {
   position: absolute;
-  font-size: 2.2rem;
+  font-size: 2rem;
   animation: float 12s linear infinite;
   opacity: 0.6;
+  z-index: 1;
 }
 
 @keyframes float {
   from { transform: translateY(110vh); }
   to { transform: translateY(-10vh); }
 }
+
+/* ❄ Snow */
+.snow {
+  position: absolute;
+  top: -5vh;
+  color: white;
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 2;
+  animation: snowfall linear forwards;
+}
+
+@keyframes snowfall {
+  to {
+    transform: translateY(110vh);
+  }
+}
 </style>
 </head>
 
 <body>
 
-<!-- floating emojis -->
 <script>
-for (let i = 0; i < 20; i++) {
+// floating lips + hearts (continuous)
+function createFloatingEmoji() {
   const el = document.createElement("div");
   el.className = "floating";
-  el.innerText = Math.random() > 0.5 ? "💋" : "💗";
+  el.innerText = Math.random() > 0.5 ? "💋" : "💕";
   el.style.left = Math.random() * 100 + "%";
-  el.style.animationDelay = Math.random() * 10 + "s";
+  el.style.fontSize = (1.5 + Math.random()) + "rem";
+  el.style.animationDuration = (8 + Math.random() * 6) + "s";
   document.body.appendChild(el);
+  setTimeout(() => el.remove(), 15000);
 }
+setInterval(createFloatingEmoji, 700);
+
+// snowfall
+function createSnow() {
+  const snow = document.createElement("div");
+  snow.className = "snow";
+  snow.innerText = Math.random() > 0.5 ? "❄" : "•";
+  snow.style.left = Math.random() * 100 + "vw";
+  snow.style.fontSize = (0.6 + Math.random() * 1.4) + "rem";
+  snow.style.animationDuration = (6 + Math.random() * 6) + "s";
+  document.body.appendChild(snow);
+  setTimeout(() => snow.remove(), 12000);
+}
+setInterval(createSnow, 200);
 </script>
 
-<!-- Screens -->
+<!-- SCREENS (TEXT UNCHANGED) -->
 
 <div class="screen active" id="s1">
   <h1>HEHEHEHE MYYY DARLINGGG!!!🤍 💋</h1>
   <p>Try to say no😏😏💋</p>
-  <button class="yes" onclick="go('s2')">YES!!! 💋</button>
+  <button onclick="go('s2')">YES!!! 💋</button>
 </div>
 
 <div class="screen" id="s2">
   <h1>MYYY LOVEEE!!!🤍💋</h1>
   <p>Am I your red string???🥺♾️🤍💋</p>
-  <button class="yes" onclick="go('s3')">YES 💗</button>
+  <button onclick="go('s3')">YES 💗</button>
   <button class="no" onmouseover="move(this)">NO</button>
 </div>
 
@@ -111,14 +142,14 @@ for (let i = 0; i < 20; i++) {
   <h1>MYYY BABEEEEE!!🤍💋</h1>
   <p>Am i your most favourite person and
     you will love me more than anyone???🥺💋🤍</p>
-  <button class="yes" onclick="go('s4')">YES 🤍</button>
+  <button onclick="go('s4')">YES 🤍</button>
   <button class="no" onmouseover="move(this)">NO</button>
 </div>
 
 <div class="screen" id="s4">
   <h1>MYYY KUCHUUUUPUCHUUUU!!!🤍🌕💋</h1>
   <p>Will you stay forever with me???🥺🥺🤍🛐💋🌕</p>
-  <button class="yes" onclick="go('final')">YES 💍</button>
+  <button onclick="go('final')">YES 💍</button>
   <button class="no" onmouseover="move(this)">NO</button>
 </div>
 
@@ -143,7 +174,6 @@ function go(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
-
 function move(btn) {
   btn.style.left = Math.random() * 80 + "%";
   btn.style.top = Math.random() * 80 + "%";
@@ -151,4 +181,4 @@ function move(btn) {
 </script>
 
 </body>
-  </html>
+    </html>
