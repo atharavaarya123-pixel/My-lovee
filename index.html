@@ -45,9 +45,12 @@ p {
 
 .buttons {
   display: flex;
-  justify-content: center;
+  justify-content: space-between; /* YES left, NO right */
+  align-items: center;
   gap: 40px;
   position: relative;
+  width: 300px;
+  margin: auto;
 }
 
 button {
@@ -61,7 +64,7 @@ button {
   font-weight: bold;
 }
 
-.no { position: absolute; }
+.no { position: relative; }
 
 /* Snowfall */
 .snow {
@@ -157,7 +160,7 @@ setInterval(createSnow, 200);
 <div class="screen" id="snowGame">
   <h1>Catch 10 Snowflakes! ❄️💗</h1>
   <p>Avoid the bombs ❌. Collect 10 special snowflakes to continue.</p>
-  <canvas id="basketCanvas" width="400" height="300" style="background: rgba(0,0,0,0.2); border-radius: 15px;"></canvas>
+  <canvas id="basketCanvas" width="400" height="300" style="border-radius:15px;"></canvas>
   <p id="scoreDisplay">Snowflakes: 0 / 10</p>
 </div>
 
@@ -255,6 +258,7 @@ initSlidePuzzle();
 const canvas = document.getElementById('basketCanvas');
 const ctx = canvas.getContext('2d');
 let basketX = canvas.width/2 - 30;
+let targetX = basketX;
 const basketWidth = 60, basketHeight = 20;
 let snowflakes = [];
 let score = 0;
@@ -273,16 +277,38 @@ function spawnSnowflake() {
 
 function draw() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  // Draw basket
-  ctx.fillStyle = '#ff4f7b';
-  ctx.fillRect(basketX, canvas.height - basketHeight - 5, basketWidth, basketHeight);
-  // Draw snowflakes
+  
+  // Draw basket (brown)
+  ctx.fillStyle = '#8B4513';
+  ctx.beginPath();
+  ctx.moveTo(basketX, canvas.height - basketHeight -5);
+  ctx.lineTo(basketX + basketWidth, canvas.height - basketHeight -5);
+  ctx.lineTo(basketX + basketWidth -5, canvas.height -5);
+  ctx.lineTo(basketX +5, canvas.height -5);
+  ctx.closePath();
+  ctx.fill();
+
+  // Draw snowflakes and bombs
   snowflakes.forEach(f => {
-    ctx.fillStyle = f.type === 'special' ? '#fff' : 'red';
-    ctx.beginPath();
-    ctx.arc(f.x, f.y, f.size/2,0,Math.PI*2);
-    ctx.fill();
+    if(f.type==='special') {
+      ctx.fillStyle = '#FFD700';
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, f.size/2,0,Math.PI*2);
+      ctx.fill();
+    } else {
+      ctx.fillStyle = 'black';
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, f.size/2,0,Math.PI*2);
+      ctx.fill();
+      // fuse
+      ctx.strokeStyle='orange';
+      ctx.beginPath();
+      ctx.moveTo(f.x, f.y-f.size/2);
+      ctx.lineTo(f.x, f.y-f.size);
+      ctx.stroke();
+    }
     f.y += f.speed;
+
     if(f.y + f.size > canvas.height - basketHeight - 5 &&
        f.x + f.size > basketX && f.x < basketX + basketWidth) {
       if(f.type==='special') score++;
@@ -296,12 +322,19 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
+// smooth sliding basket
 canvas.addEventListener('mousemove', e => {
   const rect = canvas.getBoundingClientRect();
-  basketX = e.clientX - rect.left - basketWidth/2;
-  if(basketX <0) basketX=0;
-  if(basketX>canvas.width-basketWidth) basketX = canvas.width-basketWidth;
+  targetX = e.clientX - rect.left - basketWidth/2;
 });
+
+function updateBasket() {
+  basketX += (targetX - basketX) * 0.1;
+  if(basketX<0) basketX=0;
+  if(basketX>canvas.width-basketWidth) basketX=canvas.width-basketWidth;
+  requestAnimationFrame(updateBasket);
+}
+updateBasket();
 
 function startSnowGame() {
   snowflakes=[];
@@ -315,4 +348,4 @@ document.getElementById('snowGame').addEventListener('click', startSnowGame,{onc
 </script>
 
 </body>
-</html>
+  </html>
