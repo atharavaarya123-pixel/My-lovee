@@ -1,164 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Happy New Year MYYY LOVEEE</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>HAPPPYYY NEWWW YEARR MYYY LOVEEE!!!🤍💋🌕</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", sans-serif;
-      color: white;
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      background: linear-gradient(270deg, #0a0a0a, #1c0b14, #0a0a0a);
-      background-size: 600% 600%;
-      animation: bgMove 18s ease infinite;
-    }
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  font-family: "Segoe UI", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
+  background-size: 800% 800%;
+  animation: bg 20s ease infinite;
+}
 
-    @keyframes bgMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+@keyframes bg {
+  0% {background-position:0% 50%;}
+  50% {background-position:100% 50%;}
+  100% {background-position:0% 50%;}
+}
 
-    .screen {
-      display: none;
-      max-width: 90%;
-      z-index: 2;
-    }
+.screen {
+  display: none;
+  max-width: 90%;
+  z-index: 2;
+}
 
-    .active {
-      display: block;
-    }
+.active { display: block; }
 
-    h1 {
-      font-size: 2.3rem;
-      margin-bottom: 20px;
-    }
+h1 {
+  font-size: 2.6rem;
+  margin-bottom: 15px;
+  text-shadow: 0 0 20px rgba(255,255,255,0.6);
+}
 
-    p {
-      font-size: 1.3rem;
-      margin-bottom: 30px;
-      line-height: 1.5;
-    }
+p {
+  font-size: 1.4rem;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
 
-    button {
-      padding: 12px 28px;
-      margin: 10px;
-      font-size: 1.1rem;
-      border: none;
-      border-radius: 30px;
-      cursor: pointer;
-      background: white;
-      color: black;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
+button {
+  padding: 14px 30px;
+  margin: 10px;
+  font-size: 1.1rem;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  background: white;
+  color: #ff4f7b;
+  font-weight: bold;
+}
 
-    button:hover {
-      transform: scale(1.08);
-      box-shadow: 0 0 15px rgba(255,255,255,0.4);
-    }
+.yes { background: white; }
+.no {
+  position: absolute;
+}
 
-    .emoji {
-      font-size: 3.2rem;
-      margin: 20px 0;
-    }
+.floating {
+  position: absolute;
+  font-size: 2.2rem;
+  animation: float 12s linear infinite;
+  opacity: 0.6;
+}
 
-    /* floating lips */
-    .lips {
-      position: absolute;
-      font-size: 2rem;
-      animation: floatUp 12s linear infinite;
-      opacity: 0.4;
-    }
-
-    @keyframes floatUp {
-      from {
-        transform: translateY(100vh);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(-10vh);
-        opacity: 0.6;
-      }
-    }
-  </style>
+@keyframes float {
+  from { transform: translateY(110vh); }
+  to { transform: translateY(-10vh); }
+}
+</style>
 </head>
 
 <body>
 
-  <!-- floating lips -->
-  <div class="lips" style="left:10%;">💋</div>
-  <div class="lips" style="left:30%; animation-delay:2s;">💋</div>
-  <div class="lips" style="left:55%; animation-delay:4s;">💋</div>
-  <div class="lips" style="left:75%; animation-delay:6s;">💋</div>
+<!-- floating emojis -->
+<script>
+for (let i = 0; i < 20; i++) {
+  const el = document.createElement("div");
+  el.className = "floating";
+  el.innerText = Math.random() > 0.5 ? "💋" : "💗";
+  el.style.left = Math.random() * 100 + "%";
+  el.style.animationDelay = Math.random() * 10 + "s";
+  document.body.appendChild(el);
+}
+</script>
 
-  <!-- Welcome -->
-  <div class="screen active" id="welcome">
-    <h1>Heyyyy MYYY DARLINGGG 💋</h1>
-    <p>Ready for a tinyyyy game made only for you? 🤍</p>
-    <button onclick="goTo('q1')">Yessss 💋</button>
-  </div>
+<!-- Screens -->
 
-  <!-- Question 1 -->
-  <div class="screen" id="q1">
-    <h1>MYYY LOVEEE 💋</h1>
-    <p>Was I the best person for you this year?</p>
-    <button onclick="goTo('liar')">No</button>
-    <button onclick="goTo('q2')">Yes</button>
-  </div>
+<div class="screen active" id="s1">
+  <h1>HEHEHEHE MYYY DARLINGGG!!!🤍 💋</h1>
+  <p>Try to say no😏😏💋</p>
+  <button class="yes" onclick="go('s2')">YES!!! 💋</button>
+</div>
 
-  <!-- Liar Screen -->
-  <div class="screen" id="liar">
-    <h1>You LIEEEERRRR 😤</h1>
-    <p>Think again, MYYY KUCHUUUUPUCHUUUU 🤍</p>
-    <button onclick="goTo('q1')">Go Back</button>
-  </div>
+<div class="screen" id="s2">
+  <h1>MYYY LOVEEE!!!🤍💋</h1>
+  <p>Am I your red string???🥺♾️🤍💋</p>
+  <button class="yes" onclick="go('s3')">YES 💗</button>
+  <button class="no" onmouseover="move(this)">NO</button>
+</div>
 
-  <!-- Question 2 -->
-  <div class="screen" id="q2">
-    <h1>MYYY BABEEEEE 💋</h1>
-    <p>Do you love me?</p>
-    <button onclick="goTo('knife')">No</button>
-    <button onclick="goTo('final')">Yes</button>
-  </div>
+<div class="screen" id="s3">
+  <h1>MYYY BABEEEEE!!🤍💋</h1>
+  <p>Am i your most favourite person and
+    you will love me more than anyone???🥺💋🤍</p>
+  <button class="yes" onclick="go('s4')">YES 🤍</button>
+  <button class="no" onmouseover="move(this)">NO</button>
+</div>
 
-  <!-- Knife Screen -->
-  <div class="screen" id="knife">
-    <div class="emoji">🔪🔪🔪</div>
-    <p>Wrong answer, MYYY LOVEEE 😌</p>
-    <button onclick="goTo('q2')">Go Back</button>
-  </div>
+<div class="screen" id="s4">
+  <h1>MYYY KUCHUUUUPUCHUUUU!!!🤍🌕💋</h1>
+  <p>Will you stay forever with me???🥺🥺🤍🛐💋🌕</p>
+  <button class="yes" onclick="go('final')">YES 💍</button>
+  <button class="no" onmouseover="move(this)">NO</button>
+</div>
 
-  <!-- Final Screen -->
-  <div class="screen" id="final">
-    <h1>🎉 HAPPY NEW YEAR MYYY DARLINGGG 🎉</h1>
-    <p>
-      Thank you for being mine, for choosing me, and for loving me 💗  
-      <br><br>
-      We will live forever ♾️  
-      We will explore the world 🌕🌑  
-      Hand in hand, heart to heart 💍  
-      <br><br>
-      MYYY LOVEEE, MYYY BABEEEEE, MYYY KUCHUUUUPUCHUUUU 🦢  
-      <br><br>
-      Forever us 🤍💋
-    </p>
-  </div>
+<div class="screen" id="final">
+  <h1>HAPPPPY NEWW YEAR MYYY LOVEEE!!!🤍💋</h1>
+  <p>
+    Thank you for choosing me, loving me, and staying with me!!💋  
+    <br><br>
+    We will live forever!!♾️🤍 
+    Explore the world!!💋🌕🌑  
+    And grow old together!!🛐💍🦢  
+    YOU ARE MY RED STRING RIGHT???🤍🌕💋
+    <br><br>
+    MYYY DARLINGGG, MYYY BABEEEEE, MYYY KUCHUUUUPUCHUUUU!!...You are literally my everything!!!!🥺♾️🤍💋  
+    <br><br>
+    Forever us!!!🌕💋
+  </p>
+</div>
 
-  <script>
-    function goTo(id) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-    }
-  </script>
+<script>
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function move(btn) {
+  btn.style.left = Math.random() * 80 + "%";
+  btn.style.top = Math.random() * 80 + "%";
+}
+</script>
 
 </body>
-</html>
+  </html>
