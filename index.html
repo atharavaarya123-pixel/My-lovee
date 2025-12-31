@@ -45,7 +45,7 @@ p {
 
 .buttons {
   display: flex;
-  justify-content: space-between; /* YES left, NO right */
+  justify-content: space-between;
   align-items: center;
   gap: 40px;
   position: relative;
@@ -87,18 +87,18 @@ button {
   height: 300px;
   margin: auto;
   display: grid;
-  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  grid-template: repeat(2, 1fr) / repeat(2, 1fr);
   gap: 2px;
 }
 .slideTile {
-  background-color: rgba(255,255,255,0.8);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
   cursor: pointer;
   user-select: none;
   transition: all 0.2s ease;
+  background-size: 200% 200%;
+  background-repeat: no-repeat;
 }
 .empty { background: transparent; cursor: default; }
 </style>
@@ -201,53 +201,59 @@ function escape(btn) {
 }
 
 // ---------------------
-// Slide Puzzle Game
+// Slide Puzzle Game 2x2 with photo
 // ---------------------
 const puzzleContainer = document.getElementById("slidePuzzle");
 let puzzleArray = [];
-const size = 3;
-
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
+const size = 2; // 2x2 puzzle
+const imgURL = "https://YOUR_IMAGE_URL_HERE"; // Replace with anime-style boy & girl image
 
 function initSlidePuzzle() {
   puzzleArray = [];
-  for (let i = 1; i < size*size; i++) puzzleArray.push(i);
+  for (let i=0;i<size*size-1;i++) puzzleArray.push(i);
   puzzleArray.push(null);
   shuffle(puzzleArray);
   renderPuzzle();
 }
 
-function renderPuzzle() {
+function shuffle(array){
+  for(let i=array.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [array[i],array[j]]=[array[j],array[i]];
+  }
+  return array;
+}
+
+function renderPuzzle(){
   puzzleContainer.innerHTML = '';
-  puzzleArray.forEach((num, idx) => {
+  const tileSize = 100;
+  puzzleArray.forEach((num, idx)=>{
     const div = document.createElement("div");
-    div.className = 'slideTile' + (num === null ? ' empty' : '');
-    if(num) div.innerText = num;
-    div.onclick = () => moveTile(idx);
+    div.className = 'slideTile' + (num===null?' empty':'');
+    if(num!==null){
+      div.style.backgroundImage=`url(${imgURL})`;
+      div.style.backgroundPosition=`${(num%size)*(100/(size-1))}% ${Math.floor(num/size)*(100/(size-1))}%`;
+      div.style.backgroundSize=`${size*100}% ${size*100}%`;
+    }
+    div.onclick = ()=>moveTile(idx);
     puzzleContainer.appendChild(div);
   });
 }
 
-function moveTile(idx) {
+function moveTile(idx){
   const emptyIdx = puzzleArray.indexOf(null);
-  const x1 = idx % size, y1 = Math.floor(idx / size);
-  const x2 = emptyIdx % size, y2 = Math.floor(emptyIdx / size);
-  if ((Math.abs(x1 - x2) + Math.abs(y1 - y2)) === 1) {
-    [puzzleArray[idx], puzzleArray[emptyIdx]] = [puzzleArray[emptyIdx], puzzleArray[idx]];
+  const x1 = idx%size, y1=Math.floor(idx/size);
+  const x2 = emptyIdx%size, y2=Math.floor(emptyIdx/size);
+  if(Math.abs(x1-x2)+Math.abs(y1-y2)===1){
+    [puzzleArray[idx], puzzleArray[emptyIdx]]=[puzzleArray[emptyIdx],puzzleArray[idx]];
     renderPuzzle();
     checkPuzzleComplete();
   }
 }
 
-function checkPuzzleComplete() {
-  for(let i=0;i<puzzleArray.length-1;i++) if(puzzleArray[i] !== i+1) return;
-  go('s3'); // Complete puzzle, go to next question
+function checkPuzzleComplete(){
+  for(let i=0;i<puzzleArray.length-1;i++) if(puzzleArray[i]!==i) return;
+  go('s3');
 }
 
 initSlidePuzzle();
@@ -267,7 +273,7 @@ let gameInterval;
 function spawnSnowflake() {
   const type = Math.random() < 0.8 ? 'special' : 'bomb';
   snowflakes.push({
-    x: Math.random() * (canvas.width-20),
+    x: Math.random()*(canvas.width-20),
     y: -20,
     size: 20,
     type: type,
@@ -277,9 +283,9 @@ function spawnSnowflake() {
 
 function draw() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  
-  // Draw basket (brown)
-  ctx.fillStyle = '#8B4513';
+
+  // Basket brown
+  ctx.fillStyle='#8B4513';
   ctx.beginPath();
   ctx.moveTo(basketX, canvas.height - basketHeight -5);
   ctx.lineTo(basketX + basketWidth, canvas.height - basketHeight -5);
@@ -288,59 +294,56 @@ function draw() {
   ctx.closePath();
   ctx.fill();
 
-  // Draw snowflakes and bombs
-  snowflakes.forEach(f => {
-    if(f.type==='special') {
-      ctx.fillStyle = '#FFD700';
+  snowflakes.forEach(f=>{
+    if(f.type==='special'){
+      ctx.fillStyle='#FFD700';
       ctx.beginPath();
-      ctx.arc(f.x, f.y, f.size/2,0,Math.PI*2);
+      ctx.arc(f.x,f.y,f.size/2,0,Math.PI*2);
       ctx.fill();
     } else {
-      ctx.fillStyle = 'black';
+      ctx.fillStyle='black';
       ctx.beginPath();
-      ctx.arc(f.x, f.y, f.size/2,0,Math.PI*2);
+      ctx.arc(f.x,f.y,f.size/2,0,Math.PI*2);
       ctx.fill();
-      // fuse
       ctx.strokeStyle='orange';
       ctx.beginPath();
-      ctx.moveTo(f.x, f.y-f.size/2);
-      ctx.lineTo(f.x, f.y-f.size);
+      ctx.moveTo(f.x,f.y-f.size/2);
+      ctx.lineTo(f.x,f.y-f.size);
       ctx.stroke();
     }
     f.y += f.speed;
 
-    if(f.y + f.size > canvas.height - basketHeight - 5 &&
-       f.x + f.size > basketX && f.x < basketX + basketWidth) {
+    if(f.y + f.size > canvas.height - basketHeight -5 &&
+       f.x + f.size > basketX && f.x < basketX + basketWidth){
       if(f.type==='special') score++;
-      else score = Math.max(0, score-1);
-      f.collected = true;
-      document.getElementById('scoreDisplay').innerText = 'Snowflakes: '+score+' / 10';
+      else score=Math.max(0,score-1);
+      f.collected=true;
+      document.getElementById('scoreDisplay').innerText='Snowflakes: '+score+' / 10';
       if(score>=10){ clearInterval(gameInterval); go('s4'); }
     }
   });
-  snowflakes = snowflakes.filter(f => !f.collected && f.y<canvas.height+30);
+  snowflakes=snowflakes.filter(f=>!f.collected && f.y<canvas.height+30);
   requestAnimationFrame(draw);
 }
 
-// smooth sliding basket
-canvas.addEventListener('mousemove', e => {
+canvas.addEventListener('mousemove', e=>{
   const rect = canvas.getBoundingClientRect();
-  targetX = e.clientX - rect.left - basketWidth/2;
+  targetX=e.clientX - rect.left - basketWidth/2;
 });
 
-function updateBasket() {
-  basketX += (targetX - basketX) * 0.1;
+function updateBasket(){
+  basketX += (targetX - basketX) *0.1;
   if(basketX<0) basketX=0;
   if(basketX>canvas.width-basketWidth) basketX=canvas.width-basketWidth;
   requestAnimationFrame(updateBasket);
 }
 updateBasket();
 
-function startSnowGame() {
+function startSnowGame(){
   snowflakes=[];
   score=0;
-  document.getElementById('scoreDisplay').innerText = 'Snowflakes: 0 / 10';
-  gameInterval = setInterval(spawnSnowflake, 800);
+  document.getElementById('scoreDisplay').innerText='Snowflakes: 0 / 10';
+  gameInterval=setInterval(spawnSnowflake,800);
   draw();
 }
 
